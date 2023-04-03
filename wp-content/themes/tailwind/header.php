@@ -12,8 +12,8 @@
     <?php
     wp_body_open();
     ?>
-    <nav class="bg-black transition-all duration-150 ease-in-out fixed w-full left-0 top-0 z-10 motion-reduce:transition-none">
-      <div class="py-2 text-white">
+    <nav class="bg-black transition-all duration-150 ease-in-out w-full left-0 top-0 z-10 motion-reduce:transition-none">
+      <div class="p-2 text-white">
         Header
       </div>
     </nav>
