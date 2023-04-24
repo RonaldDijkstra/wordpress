@@ -1,5 +1,5 @@
 <?php 
-$items = get_kvk_data();
+$items = get_kvk_base_data();
 ?>
 
 <?php get_header(); ?>
@@ -7,10 +7,9 @@ $items = get_kvk_data();
   <h1 class="text-4xl">
     <?= the_title(); ?>
   </h1>
-  <p>
-    <?= the_content(); ?>
-  </p>
+  <br><br>
   <?php foreach($items as $item): ?>
+    <?php $kvkNummer = $item['kvkNummer']; ?>
     <div>
         <h3>
             <strong><?= $item['handelsnaam']; ?></strong>
@@ -19,7 +18,7 @@ $items = get_kvk_data();
             Type: <?= $item['type']; ?>
         </div>
         <div>
-            KVK-nummer: <?= $item['kvkNummer']; ?>
+            KVK-nummer: <?= $kvkNummer; ?>
         </div>
         <div>
             Straat: <?= $item['straatnaam']; ?>
@@ -30,9 +29,25 @@ $items = get_kvk_data();
         <div>
             Soort adres: <?= $item['adresType']; ?>
         </div>
+        <br>
+        <?php
+            $owner = get_owner($kvkNummer);
+            $rsin = isset($owner['rsin']) ? $owner['rsin'] : null;
+        ?>
+        <div>
+            <strong>Eigenaar</strong>
+        </div>
+        <div>
+            Rechtsvorm: <?= $owner['rechtsvorm']; ?>
+        </div>
+        <?php if($rsin): ?>
+            <div>
+                RSIN: <?= $owner['rsin']; ?>
+            </div>
+        <?php endif; ?>
         <br><br>
     </div>
-    <hr><br><br>
+    <hr><br>
   <?php endforeach; ?>
 </main>
 <?php get_footer(); ?>
