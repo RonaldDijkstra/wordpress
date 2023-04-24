@@ -42,9 +42,12 @@
         return "Error: " . $error;
     }
 
-    // Decode the JSON response and return it as an associative array
+    // Decode the JSON response
     $data = json_decode($response, true);
+
+    // Get the results array
     $results = $data['resultaten'];
 
+    // Return the results
     return $results;
  }
