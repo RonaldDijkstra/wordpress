@@ -9,82 +9,49 @@
  * License: 
  */
 
-// Note: variable for the api key needs to be in an env 
+// Note: variable for the api key needs to be in an env var
 // for speed i just made sure it works 
-// the ssl verifyhost + verifypeer settings are a security risks, which should not be used in prod 
+// the ssl verify + local ssl verify settings are security risks, which should not be used in prod 
 // but again, for speed i just made sure it works
 
-function get_kvk_base_data()
+// Highly unrecommended 
+add_filter( 'https_ssl_verify', '__return_false' );
+add_filter( 'https_local_ssl_verify', '__return_false' );
+
+function get_kvk_data()
 {
-    $curl = curl_init();
+    // Make a request to the API using the WordPress HTTP API
+    $response = wp_remote_get( 'https://api.kvk.nl/test/api/v1/zoeken?apikey=l7xx1f2691f2520d487b902f4e0b57a0b197' );
 
-    // Set the URL and other curl options
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://api.kvk.nl/test/api/v1/zoeken?apikey=l7xx1f2691f2520d487b902f4e0b57a0b197',
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_SSL_VERIFYHOST => false, // TODO: Fix this stupid danger later!!
-        CURLOPT_SSL_VERIFYPEER => false,
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
-    ));
-
-    // Send the request and get the response
-    $response = curl_exec($curl);
-    $error = curl_error($curl);
-
-    // Close the curl session
-    curl_close($curl);
-
-    // If there was an error, return it
-    if ($error) {
-        return "Error: " . $error;
+    // Check for errors
+    if ( is_wp_error( $response ) ) {
+        return $response;
     }
 
-    // Decode the JSON response
-    $data = json_decode($response, true);
+    // Get the response body as a string
+    $data = wp_remote_retrieve_body( $response );
 
-    // Get the results array
-    $results = $data['resultaten'];
+    // Decode the JSON data
+    $data = json_decode( $data );
 
-    // Return the results
-    return $results;
+    return $data;
 }
 
-function get_owner($kvkNummer)
+function get_kvk_owner($kvkNummer)
 {
-    $curl = curl_init();
+    // Make a request to the API using the WordPress HTTP API
+    $response = wp_remote_get( 'https://api.kvk.nl/test/api/v1/basisprofielen/' . $kvkNummer . '/eigenaar?apikey=l7xx1f2691f2520d487b902f4e0b57a0b197' );
 
-    // Set the URL and other curl options
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://api.kvk.nl/test/api/v1/basisprofielen/' . $kvkNummer . '/eigenaar?apikey=l7xx1f2691f2520d487b902f4e0b57a0b197',
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_SSL_VERIFYHOST => false, // TODO: Fix this stupid danger later!!
-        CURLOPT_SSL_VERIFYPEER => false,
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
-    ));
-
-    // Send the request and get the response
-    $response = curl_exec($curl);
-    $error = curl_error($curl);
-
-    // Close the curl session
-    curl_close($curl);
-
-    // If there was an error, return it
-    if ($error) {
-        return "Error: " . $error;
+    // Check for errors
+    if ( is_wp_error( $response ) ) {
+        return $response;
     }
 
-    // Decode the JSON response
-    $data = json_decode($response, true);
+    // Get the response body as a string
+    $data = wp_remote_retrieve_body( $response );
 
-    // Return the results
+    // Decode the JSON data
+    $data = json_decode( $data );
+
     return $data;
 }
